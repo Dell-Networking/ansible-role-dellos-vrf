@@ -1,0 +1,9 @@
+---
+ - name: "Provision vrf configuration for OS9"
+   dellos9_config:
+      src: dellos9_vrf.j2
+      provider: "{{ cli }}"
+#   notify: save config os9
+   when: ansible_net_os_name == "dellos9"
+
+
