@@ -1,9 +1,10 @@
 #jinja2: trim_blocks: True,lstrip_blocks: True
 {################################
+
 Purpose:
-Configure VRF on Devices.
+Configure VRF on dellos9 Devices.
+
 dellos_vrf:
- hostname:
   vrfdetails:
    - vrf_id: 1
      vrf_name: VLTi-KEEPALIVE
@@ -16,10 +17,9 @@ dellos_vrf:
         state: absent
 
 ################################}
-{% if (dellos_vrf is defined and dellos_vrf) and (hostname in dellos_vrf) %}
-{% set vars  = dellos_vrf[hostname] %}
-{% if vars.vrfdetails is defined %}
-  {% for vrf in vars.vrfdetails %}
+{% if (dellos_vrf is defined and dellos_vrf) %}
+{% if dellos_vrf.vrfdetails is defined %}
+  {% for vrf in dellos_vrf.vrfdetails %}
     {% if vrf.vrf_name is defined %}
       {% if vrf.vrf_name %}
         {% if vrf.state is defined and vrf.state == 'absent' %}

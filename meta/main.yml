@@ -1,17 +1,23 @@
 # Copyright (c) 2017 Dell Inc.
 ---
 galaxy_info:
-  author: Dell EMC Networking Engineering 
-  description: The dellos-vrf role facilitates the configuration of virtual routing and forwarding (VRF) attributes in devices running Dell EMC Networking Operating Systems.
+  author: Dell EMC Networking Engineering
+  description: The dellos-vrf role facilitates the configuration of VRF attributes in devices running Dell EMC Networking Operating Systems.
+  company: Dell Inc
   license:  Apache 2.0
   min_ansible_version: 2.2
 
   platforms:
+  - name: Dell OS6
   - name: Dell OS9
+  - name: Dell OS10
 
   galaxy_tags:
     - Networking
-    - Dell 
+    - Dell
     - EMC
-    - OS9
     - DellEMC
+    - OS9
+    - OS6
+    - OS10
+

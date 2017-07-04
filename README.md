@@ -1,7 +1,7 @@
 VRF Role for Dell EMC Networking OS
 ====================================
 
-This role facilitates to configure the basics of virtual routing and forwarding (VRF) that helps in the partition of physical routers to multiple virtual routers. This role is abstracted for OS9.
+This role facilitates to configure the basics of virtual routing and forwarding (VRF) that helps in the partition of physical routers to multiple virtual routers. This role is abstracted for dellos9.
 
 Installation
 ------------
@@ -18,13 +18,13 @@ This role requires an SSH connection for connectivity to your Dell EMC Networkin
 Role Variables
 --------------
 
-``dellos_vrf`` (dictionary) contains the hostname (dictionary). The hostname is the value of the ``hostname`` variable that corresponds to the name of the OS device. This role is abstracted using the variable ``ansible_net_os_name`` that can take the following value: dellos9.
+This role is abstracted using the variable ``ansible_net_os_name`` that can take the following value: dellos9.
 
 Any role variable with a corresponding state variable set to absent negates the configuration of that variable. For variables with no state variable, setting an empty value for the variable negates the corresponding configuration.
 
 The variables and its values are case-sensitive.
 
-``hostname`` holds the following keys:
+``dellos_vrf`` holds the following keys:
 
 |        Key | Type                      | Notes                                                                                                                                                                                     |
 |-----------:|---------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -33,8 +33,8 @@ The variables and its values are case-sensitive.
 | vrfdetails.vrf_id      | integer(required)        | Configures the VRF ID for the corresponding VRF.    |
 | vrfdetails.description | string    | Configures a one line description for the VRF.  |
 | vrfdetails.state       | string    | Removes the VRF instance name if state is set to absent. |
-| vrfdetails.tagged_portname      | list        | Specifies list of valid interface names on OS9 device.  |
-| tagged_portname.port   | string    | Specifies valid OS9 interface name. |
+| vrfdetails.tagged_portname      | list        | Specifies list of valid interface names on dellos9 device.  |
+| tagged_portname.port   | string    | Specifies valid dellos9 interface name. |
 | tagged_portname.state  | string    | Removes VRF association in the interface if this state is set to absent. |
 
 ```
@@ -86,10 +86,7 @@ Sample ``host_vars/leaf1``:
           authpass: XXXX
       transport: cli
 
-Sample ``vars/main.yaml``:
-
     dellos_vrf:
-      leaf1:
         vrfdetails:
           - vrf_id: 1
             vrf_name: VLTi-KEEPALIVE
@@ -116,7 +113,7 @@ Then run with:
 License
 --------
 
-Copyright (c) 2017, Dell Inc. All rights reserved.
+Copyright (c) 2016, Dell Inc. All rights reserved.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

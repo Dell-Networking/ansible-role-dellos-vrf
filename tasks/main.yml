@@ -1,5 +1,5 @@
 ---
- - name: "Provision vrf configuration for OS9"
+ - name: "Provisioning VRF configuration for dellos9"
    dellos9_config:
       src: dellos9_vrf.j2
       provider: "{{ cli }}"
