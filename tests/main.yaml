@@ -13,3 +13,25 @@ dellos_vrf:
           state: absent
         - port: fortyGigE 1/8
           state: absent
+# Sample variables for dellos10 device
+
+dellos_vrf:
+  vrfdetails:
+    - vrf_name: "dellos10vrf"
+      state: "present"
+      ip_route_import:
+        community_value: "10:20"
+        state: "present"
+      ip_route_export:
+        community_value: "30:40"
+        state: "present"
+      ipv6_route_import:
+        community_value: "40:50"
+        state: "absent"
+      ipv6_route_export:
+        community_value: "60:70"
+        state: "absent"
+      upd_src_ip_loopback_id: "5"
+    - vrf_name: "dellos10vrf1"
+      state: "absent"
+
