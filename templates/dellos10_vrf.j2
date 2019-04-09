@@ -1,0 +1,88 @@
+#jinja2: trim_blocks: True,lstrip_blocks: True
+{################################
+
+Purpose:
+Configure VRF on dellos10 Devices.
+
+dellos_vrf:
+  vrfdetails:
+    -vrf_name: "dellos10vrf"
+     state: "present"
+     ip_route_import:
+       community_value: 10:15
+       state: "absent"
+     ip_route_export:
+       commnity_value: 20:30
+       state: "present"
+     ipv6_route_import:
+       community_value: 10:15
+       state: "present"
+     ipv6_route_export:
+       commnity_value: 20:30
+       state: "present"
+     upd_src_ip_loopback_id: "5"
+    -vrf_name: "dellos10vrf1"
+     state: "absent"
+################################}
+{% if (dellos_vrf is defined and dellos_vrf) %}
+{% if dellos_vrf.vrfdetails is defined %}
+  {% for vrf in dellos_vrf.vrfdetails %}
+    {% if vrf.vrf_name is defined %}
+      {% if vrf.vrf_name %}
+        {% if vrf.state is defined and vrf.state == 'absent' %}
+no ip vrf {{ vrf.vrf_name }}
+        {% else %}
+ip vrf {{ vrf.vrf_name }}
+          {% if vrf.ip_route_import is defined and vrf.ip_route_import %}
+          {% set route_vars = vrf.ip_route_import %}
+            {% if route_vars.community_value is defined and route_vars.community_value %}
+              {% if route_vars.state == 'present' %}
+ ip route-import {{ route_vars.community_value  }}
+              {% else %}
+ no ip route-import {{ route_vars.community_value }}
+              {% endif %}
+            {% endif %}
+          {% endif %}
+          {% if vrf.ipv6_route_import is defined and vrf.ipv6_route_import %}
+          {% set route_vars = vrf.ipv6_route_import %}
+            {% if route_vars.community_value is defined and route_vars.community_value %}
+              {% if route_vars.state == 'present' %}
+ ipv6 route-import {{ route_vars.community_value  }}
+              {% else %}
+ no ipv6 route-import {{ route_vars.community_value }}
+              {% endif %}
+            {% endif %}
+          {% endif %}
+          {% if vrf.ip_route_export is defined and vrf.ip_route_export %}
+          {% set route_vars = vrf.ip_route_export %}
+            {% if route_vars.community_value is defined and route_vars.community_value %}
+              {% if route_vars.state == 'present' %}
+ ip route-export {{ route_vars.community_value  }}
+              {% else %}
+ no ip route-export {{ route_vars.community_value }}
+              {% endif %}
+            {% endif %}
+          {% endif %}
+          {% if vrf.ipv6_route_import is defined and vrf.ipv6_route_import %}
+          {% set route_vars = vrf.ipv6_route_import %}
+            {% if route_vars.community_value is defined and route_vars.community_value %}
+              {% if route_vars.state == 'present' %}
+ ipv6 route-export {{ route_vars.community_value  }}
+              {% else %}
+ no ipv6 route-export {{ route_vars.community_value }}
+              {% endif %}
+            {% endif %}
+          {% endif %}
+          {% if vrf.upd_src_ip_loopback_id is defined %}
+            {% if vrf.upd_src_ip_loopback_id %}
+ update-source-ip loopback {{ vrf.upd_src_ip_loopback_id}}
+            {% else %}
+ no update-source-ip loopback
+            {% endif %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    {% endif %}
+  {% endfor %}
+{% endif %}
+{% endif %}

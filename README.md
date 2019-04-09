@@ -1,7 +1,7 @@
 VRF role
 ========
 
-This role facilitates to configure the basics of virtual routing and forwarding (VRF) that helps in the partition of physical routers to multiple virtual routers. This role is abstracted for dellos9.
+This role facilitates to configure the basics of virtual routing and forwarding (VRF) that helps in the partition of physical routers to multiple virtual routers. This role is abstracted for dellos9 and dellos10 device.
 
 The vrf role requires an SSH connection for connectivity to a Dell EMC Networking device. You can use any of the built-in OS connection variables .
 
@@ -13,7 +13,7 @@ Installation
 Role variables
 --------------
 
-- Role is abstracted using the variable *ansible_network_os* that can take the dellos9 value
+- Role is abstracted using the variable *ansible_network_os* that can take the dellos9 and dellos10 values
 - If *dellos_cfg_generate* is set to true, the variable generates the role configuration commands in a file
 - Any role variable with a corresponding state variable set to absent negates the configuration of that variable
 - Setting an empty value for any variable negates the corresponding configuration.
@@ -23,11 +23,24 @@ Role variables
 
 | Key        | Type                      | Description                                             | Support               |
 |------------|---------------------------|---------------------------------------------------------|-----------------------|
-| ``vrfdetails`` | list              | Configures the list of VRF instances (see ``instances.*``)  | dellos9 |
-| ``vrfdetails.vrf_name``      | string         | Specifies the VRF instance name (default is management)  | dellos9 |
+| ``vrfdetails`` | list              | Configures the list of VRF instances (see ``instances.*``)  | dellos9, dellos10 |
+| ``vrfdetails.vrf_name``      | string         | Specifies the VRF instance name (default is management)  | dellos9, dellos10 |
 | ``vrfdetails.vrf_id``      | integer (required)        | Configures the VRF ID for the corresponding vrf    | dellos9 |
 | ``vrfdetails.description`` | string    | Configures a one line description for the VRF  | dellos9 |
-| ``vrfdetails.state``       | string    | Deletes the VRF instance name if set to absent | dellos9 |
+| ``vrfdetails.state``       | string    | Deletes the VRF instance name if set to absent | dellos9, dellos10 |
+| ``vrfdetails.ip_route_import``  | string    | VRF IP config subcommands | dellos10 |
+| ``ip_route_import.community_value``  | string    | RT community value | dellos10 |
+| ``ip_route_import.state``  | string    | Delete the IP config if set to absent | dellos10 |
+| ``vrfdetails.ip_route_export``  | string    | VRF IP config subcommands | dellos10 |
+| ``ip_route_export.community_value``  | string    | RT community value | dellos10 |
+| ``ip_route_export.state``  | string    | Delete the IP config if set to absent | dellos10 |
+| ``vrfdetails.ipv6_route_import``  | string    | VRF IPv6 config subcommands | dellos10 |
+| ``ipv6_route_import.community_value``  | string    | RT community value | dellos10 |
+| ``ipv6_route_import.state``  | string    | Delete the IP config if set to absent | dellos10 |
+| ``vrfdetails.ipv6_route_export``  | string    | VRF IPv6 config subcommands | dellos10 |
+| ``ipv6_route_import.community_value``  | string    | RT community value | dellos10 |
+| ``ipv6_route_import.state``  | string    | Delete the IP config if set to absent | dellos10 |
+| ``upd_src_ip_loopback_id``  | string    |  Configure source ip for any leaked route in VRF from the provided loopback id, delete if empty string| dellos10 |
 | ``vrfdetails.tagged_portname``      | list        | Specifies list of valid interface names | dellos9 |
 | ``tagged_portname.port``   | string    | Specifies valid interface name | dellos9 |
 | ``tagged_portname.state``  | string    | Deletes VRF association in the interface if set to absent | dellos9 |
@@ -46,9 +59,9 @@ Ansible Dell EMC Networking roles require connection information to establish co
 | ``ansible_ssh_user`` | no       |            | Specifies the username that authenticates the CLI login for the connection to the remote device; if value is unspecified, the ANSIBLE_REMOTE_USER environment variable value is used  |
 | ``ansible_ssh_pass`` | no       |            | Specifies the password that authenticates the connection to the remote device.  |
 | ``ansible_become`` | no       | yes, no\*   | Instructs the module to enter privileged mode on the remote device before sending any commands; if value is unspecified, the ANSIBLE_BECOME environment variable value is used, and the device attempts to execute all commands in non-privileged mode |
-| ``ansible_become_method`` | no       | enable, sudo\*   | Instructs the module to allow the become method to be specified for handling privilege escalation; if value is unspecified, the ANSIBLE_BECOME_METHOD environment variable value is used |
-| ``ansible_become_pass`` | no       |            | Specifies the password to use if required to enter privileged mode on the remote device; if ``ansible_become`` is set to no this key is not applicable |
-| ``ansible_network_os`` | yes      | dellos6/dellos9/dellos10, null\*  | Loads the correct terminal and cliconf plugins to communicate with the remote device |
+| ``ansible_become_method`` | no       | enable, sudo\*   | Instructs the module to allow the become method to be specified for handling privilege escalation; if value is unspecified, the ANSIBLE_BECOME_METHOD environment variable value is used. |
+| ``ansible_become_pass`` | no       |            | Specifies the password to use if required to enter privileged mode on the remote device; if ``ansible_become`` is set to no this key is not applicable. |
+| ``ansible_network_os`` | yes      | dellos6/dellos9/dellos10, null\*  | This value is used to load the correct terminal and cliconf plugins to communicate with the remote device. |
 
 > **NOTE**: Asterisk (\*) denotes the default value if none is specified.
 
@@ -68,7 +81,7 @@ When *dellos_cfg_generate* is set to true, the variable generates the configurat
   
     leaf1 ansible_host= <ip_address> 
 
-**Sample host_vars/leaf1**
+**Sample host_vars/leaf1** for dellos9 device
 
     hostname: leaf1
     ansible_become: yes
@@ -90,6 +103,23 @@ When *dellos_cfg_generate* is set to true, the variable generates the configurat
               - port:fortyGigE 1/8
                 state: present
 
+**Sample host_vars/leaf1 for dellos10 device
+
+    hostname: leaf1
+    ansible_become: yes
+    ansible_become_method: xxxxx
+    ansible_become_pass: xxxxx
+    ansible_ssh_user: xxxxx
+    ansible_ssh_pass: xxxxx
+    ansible_network_os: dellos10
+    build_dir: ../temp/dellos10
+    dellos_vrf:
+        vrfdetails:
+          - vrf_name: "dellos10vrf" 
+            state: "present"
+            update_source_ip: "5"
+          - vrf_name: "dellos10vrf1"
+            state: "absent"
 
 **Simple playbook to setup system - leaf.yaml**
 

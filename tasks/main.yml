@@ -16,4 +16,12 @@
 #   notify: save config os9
    register: output
 
+ - name: "Provisioning VRF configuration for dellos10"
+   dellos10_config:
+      src: dellos10_vrf.j2
+   when: (ansible_network_os is defined and ansible_network_os == "dellos10")
+#   notify: save config os9
+   register: output
+
+
 
