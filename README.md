@@ -40,6 +40,9 @@ Role variables
 | ``vrfdetails.ipv6_route_export``  | string    | VRF IPv6 config subcommands | dellos10 |
 | ``ipv6_route_import.community_value``  | string    | RT community value | dellos10 |
 | ``ipv6_route_import.state``  | string    | Delete the IP config if set to absent | dellos10 |
+| ``vrfdetails.map_ip_interface``  | list        | Specifies list of valid interface names | dellos10 |
+| ``map_ip_interface.intf_id``  | string    | Specifies valid interface name | dellos10 |
+| ``map_ip_interface.state``  | string    | Deletes VRF association in the interface if set to absent | dellos10 |
 | ``upd_src_ip_loopback_id``  | string    |  Configure source ip for any leaked route in VRF from the provided loopback id, delete if empty string| dellos10 |
 | ``vrfdetails.tagged_portname``      | list        | Specifies list of valid interface names | dellos9 |
 | ``tagged_portname.port``   | string    | Specifies valid interface name | dellos9 |
@@ -77,31 +80,11 @@ This example uses the *dellos-vrf* role to setup a VRF and associate it to an in
 
 When *dellos_cfg_generate* is set to true, the variable generates the configuration commands as a .part file in *build_dir* path. By default, the variable is set to false. It writes a  simple playbook that references the *dellos-vrf* role.
 
+*upd_src_ip_loopback_id* has an dependency with association of the interface in a VRF. So the *dellos_vrf* role needs to be invoked twice with different input dictionary one for the create and one for *upd_src_ip_loopback_id*, refer the example playbook for more details.
+
 **Sample hosts file**
   
     leaf1 ansible_host= <ip_address> 
-
-**Sample host_vars/leaf1** for dellos9 device
-
-    hostname: leaf1
-    ansible_become: yes
-    ansible_become_method: xxxxx
-    ansible_become_pass: xxxxx
-    ansible_ssh_user: xxxxx
-    ansible_ssh_pass: xxxxx
-    ansible_network_os: dellos9
-    build_dir: ../temp/dellos9
-    dellos_vrf:
-        vrfdetails:
-          - vrf_id: 1
-            vrf_name: VLTi-KEEPALIVE
-            description: VRF-to-support-Peer-Keepalive-Link
-            state: present
-            tagged_portname:
-              - port: fortyGigE 1/7
-                state: present
-              - port:fortyGigE 1/8
-                state: present
 
 **Sample host_vars/leaf1 for dellos10 device
 
@@ -117,9 +100,27 @@ When *dellos_cfg_generate* is set to true, the variable generates the configurat
         vrfdetails:
           - vrf_name: "dellos10vrf" 
             state: "present"
-            update_source_ip: "5"
-          - vrf_name: "dellos10vrf1"
-            state: "absent"
+            ip_route_import:
+              community_value: "10:20"
+              state: "present"
+            ip_route_export:
+              community_value: "30:40"
+              state: "present"
+            ipv6_route_import:
+              community_value: "40:50"
+              state: "absent"
+            ipv6_route_export:
+              community_value: "60:70"
+              state: "absent"
+            map_ip_interface:
+             - intf_id : "loopback11"
+               state   : "present"
+
+    dellos_vrf_upd_src_loopback:
+        vrfdetails:
+          - vrf_name: "dellos10vrf"
+            state: "present"
+            upd_src_ip_loopback_id: 11
 
 **Simple playbook to setup system - leaf.yaml**
 
@@ -127,8 +128,19 @@ When *dellos_cfg_generate* is set to true, the variable generates the configurat
       roles:
          - Dell-Networking.dellos-vrf
 
+**Simple playbook to setup dellos10 with upd_src_ip_loopback_id - leaf.yaml**
+
+    - hosts: leaf1
+      roles:
+         - Dell-Networking.dellos-vrf
+    - hosts: leaf1
+      vars:
+         dellos_vrf: "{{ dellos_vrf_upd_src_loopback }}"
+      roles:
+         - Dell-Networking.dellos-vrf
+
 **Run**
 
     ansible-playbook -i hosts leaf.yaml
 
-(c) 2017 Dell Inc. or its subsidiaries. All Rights Reserved.
+(c) 2017-2019 Dell Inc. or its subsidiaries. All Rights Reserved.

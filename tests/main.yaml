@@ -31,7 +31,12 @@ dellos_vrf:
       ipv6_route_export:
         community_value: "60:70"
         state: "absent"
-      upd_src_ip_loopback_id: "5"
-    - vrf_name: "dellos10vrf1"
-      state: "absent"
+      map_ip_interface:
+       - intf_id : "loopback11"
+         state   : "present"
 
+dellos_vrf_upd_src_loopback:
+  vrfdetails:
+    - vrf_name: "vrf_test"
+      state: "present"
+      upd_src_ip_loopback_id: 11
