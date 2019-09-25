@@ -1,6 +1,5 @@
 ---
 # vars file for Dell-Networking.dellos-vrf, below gives a sample configuration
-
 # Sample variables for dellos9 device
 dellos_vrf:
   vrfdetails:
@@ -34,4 +33,3 @@ dellos_vrf:
       upd_src_ip_loopback_id: "5"
     - vrf_name: "dellos10vrf1"
       state: "absent"
-
