@@ -12,4 +12,3 @@ dellos_vrf:
           state: absent
         - port: fortyGigE 1/8
           state: absent
-
