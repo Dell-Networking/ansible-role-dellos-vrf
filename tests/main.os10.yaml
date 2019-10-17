@@ -1,20 +1,6 @@
 ---
 # vars file for Dell-Networking.dellos-vrf, below gives a sample configuration
-
-# Sample variables for dellos9 device
-dellos_vrf:
-  vrfdetails:
-    - vrf_id: 23
-      vrf_name: VRFi-KEEPALIVE 
-      description: test  
-      state: absent
-      tagged_portname: 
-        - port: fortyGigE 1/7
-          state: absent
-        - port: fortyGigE 1/8
-          state: absent
 # Sample variables for dellos10 device
-
 dellos_vrf:
   vrfdetails:
     - vrf_name: "dellos10vrf"
@@ -37,6 +23,6 @@ dellos_vrf:
 
 dellos_vrf_upd_src_loopback:
   vrfdetails:
-    - vrf_name: "vrf_test"
+    - vrf_name: "dellos10vrf"
       state: "present"
       upd_src_ip_loopback_id: 11
