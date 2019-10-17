@@ -1,4 +1,4 @@
-# Copyright (c) 2017 Dell Inc.
+# Copyright (c) 2017-2019 Dell Inc. or its subsidiaries. All Rights Reserved.
 ---
 galaxy_info:
   author: Dell EMC Networking Engineering
@@ -8,14 +8,12 @@ galaxy_info:
   min_ansible_version: 2.2
 
   platforms:
-  - name: Dell OS9
-  - name: Dell OS10
+  - name: DellOS
 
   galaxy_tags:
-    - Networking
-    - Dell
-    - EMC
-    - DellEMC
-    - OS9
-    - OS10
-
+    - networking
+    - dell
+    - emc
+    - dellemc
+    - dellos9
+    - dellos10
