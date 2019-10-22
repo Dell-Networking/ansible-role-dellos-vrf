@@ -18,7 +18,10 @@ dellos_vrf:
      ipv6_route_export:
        commnity_value: 20:30
        state: "present"
-     upd_src_ip_loopback_id: "5"
+     map_ip_interface:
+       -intf_id : loopback6
+        state   : "present"
+     upd_src_ip_loopback_id: 5
     -vrf_name: "dellos10vrf1"
      state: "absent"
 ################################}
@@ -71,9 +74,22 @@ ip vrf {{ vrf.vrf_name }}
               {% endif %}
             {% endif %}
           {% endif %}
+          {% if vrf.map_ip_interface is defined and vrf.map_ip_interface %}
+ exit
+            {% for map_ip_interface in vrf.map_ip_interface %}
+              {% if map_ip_interface.intf_id is defined and map_ip_interface.intf_id %}
+interface {{ map_ip_interface.intf_id }}
+                {% if map_ip_interface.state is defined and map_ip_interface.state == "absent" %}
+ no ip vrf forwarding
+                {% else %}
+ ip vrf forwarding {{ vrf.vrf_name }}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
           {% if vrf.upd_src_ip_loopback_id is defined %}
             {% if vrf.upd_src_ip_loopback_id %}
- update-source-ip loopback {{ vrf.upd_src_ip_loopback_id}}
+ update-source-ip loopback{{ vrf.upd_src_ip_loopback_id}}
             {% else %}
  no update-source-ip loopback
             {% endif %}
